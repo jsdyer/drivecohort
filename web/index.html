@@ -1,33 +1,23 @@
 <!doctype html>
-<html lang="en-CA">
+<html lang="en" data-tool="{{TOOL_ID}}">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="{{DESCRIPTION}}">
-  <title>{{TITLE}} · CoolCode</title>
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./app.mjs"></script>
-</head>
-<body data-tool-id="{{TOOL_ID}}">
-  <a class="skip" href="#main">Skip to content</a>
-  <header><a href="https://coolcode.ca/">← CoolCode.ca</a><a href="{{SOURCE_URL}}">Source &amp; instructions ↗</a></header>
-  <main id="main">
-    <p class="eyebrow">Browser tool starter</p>
-    <h1>{{TITLE}}</h1>
-    <p class="intro">{{DESCRIPTION}}</p>
-    <section aria-labelledby="example-title">
-      <h2 id="example-title">Clean a list</h2>
-      <p>Trim spaces, skip blank lines and remove exact duplicates. Capitalization stays distinct.</p>
-      <div class="panels">
-        <div><label for="input">Your lines</label><textarea id="input" rows="10" maxlength="100000" spellcheck="false" placeholder="Paste one item per line"></textarea></div>
-        <div><label for="output">Cleaned lines</label><textarea id="output" rows="10" readonly spellcheck="false"></textarea></div>
-      </div>
-      <div class="actions"><button id="sample" type="button">Load example</button><button id="clear" type="button">Clear</button><button id="copy" type="button" hidden>Copy result</button></div>
-      <p id="status" role="status" aria-live="polite">Paste a list to begin.</p>
-      <noscript><p>This tool needs JavaScript to process your text. The source is available above.</p></noscript>
-    </section>
-    <aside aria-label="Privacy"><strong>Stays on your device.</strong> This example makes no API requests and does not save your text. Reloading clears it.</aside>
-  </main>
-  <footer>Part of <a href="https://coolcode.ca/">the CoolCode collection</a>.</footer>
-</body>
-</html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="{{DESCRIPTION}}">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'; form-action 'none'; base-uri 'none'">
+<title>{{TITLE}} · CoolCode</title><link rel="stylesheet" href="./style.css"><script type="module" src="./app.mjs"></script>
+</head><body>
+<header><div class="bar"><a class="brand" href="https://coolcode.ca/">CoolCode</a><span class="sep">/</span><span>Drive Cohort</span><a class="repo" href="{{SOURCE_URL}}">Repository ↗</a></div></header>
+<main><section class="intro"><div><p class="eyebrow"><span class="pilot"></span> Backblaze Drive Stats</p><h1>Drive Cohort</h1><p class="lead">Find the failures, drive-days and fleet size behind your drive model’s annualized failure rate.</p></div><div class="period"><span>Fleet record</span><strong id="coverage">Loading coverage…</strong><small id="scope"></small></div></section>
+<nav><a href="#fleet">Fleet explorer</a><a href="#local">Local SMART reports</a><a href="#method">Method &amp; sources</a></nav>
+<div id="loading" role="status">Loading published fleet records…</div>
+<section id="fleet" hidden><div class="finder"><div><h2>Find a drive model</h2><p>Look up the model number printed on the label or reported by smartctl.</p></div>
+<form id="lookup"><label for="search">Model number</label><div class="inputrow"><input type="search" id="search" list="models" placeholder="e.g. ST12000NM0007" maxlength="140" autocomplete="off" spellcheck="false"><button>Look up</button></div><datalist id="models"></datalist></form>
+<details id="browse"><summary>Browse indexed models</summary><div class="model-list" id="catalogue"></div></details></div>
+<section class="result" aria-live="polite"><div class="resulthead"><div><p class="eyebrow" id="maker"></p><h2 id="modelname"></h2></div><label class="chooser" id="quarterLabel">Quarter<select id="quarter"></select></label></div><p id="empty" hidden></p>
+<div id="metrics"><div class="stat"><span>Annualized failure rate</span><strong id="afr"></strong></div><div class="stat"><span>Observed failures</span><strong id="failures"></strong></div><div class="stat"><span>Drive-days</span><strong id="days"></strong></div><div class="stat"><span>Drives at quarter end</span><strong id="drives"></strong></div></div>
+<div class="sourcebar" id="rowSource"></div></section>
+<section class="panel" id="history"><div class="sectiontitle"><h2>Quarterly history</h2><span>Backblaze production fleet</span></div><div class="overflow"><table><thead><tr><th scope="col">Quarter</th><th scope="col">AFR</th><th scope="col">Failures</th><th scope="col">Drive-days</th><th scope="col">Drives</th><th scope="col">Source</th></tr></thead><tbody id="trends"></tbody></table></div></section></section>
+<section id="local" class="panel"><div class="sectiontitle"><h2>Local SMART reports</h2><span>On this device only</span></div><p>Open a <code>smartctl -a -j</code> JSON report to match its model. Add a later report from the same disk to compare readings. Files and serial numbers stay in this tab.</p>
+<div class="files"><label>Earlier report<input id="file0" type="file" accept=".json,application/json"></label><label>Later report<input id="file1" type="file" accept=".json,application/json"></label></div><p id="reportMsg" role="status"></p><div class="overflow" id="reportTable"></div><button class="clear" id="clear" hidden>Clear reports</button></section>
+<section class="panel" id="method"><h2>Method &amp; sources</h2><p>Backblaze reports production hard drive models that meet its quarterly inclusion criteria. A drive-day counts one drive observed for one day. Each annualized failure rate equals failures × 365 ÷ drive-days × 100, rounded to two decimal places. A drive count is a snapshot at quarter end.</p><p>A missing row means the model was absent from that quarter’s published table. Zero observed failures are possible. These fleet results describe Backblaze’s workload and do not predict when a particular disk will fail.</p><p id="edition"></p><div class="links"><a href="https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data">Backblaze data and terms ↗</a><a href="./data/cohorts.json">Download cohort data</a><a href="{{SOURCE_URL}}">Source and offline importer ↗</a></div></section></main>
+<footer><a href="https://coolcode.ca/">CoolCode</a><span>Drive Cohort</span></footer></body></html>

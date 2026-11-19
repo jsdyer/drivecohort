@@ -1,16 +1,49 @@
 {
-  "id": "coolcode-tool-template",
-  "title": "CoolCode Tool Starter",
-  "description": "A browser-only example that trims lines and removes exact duplicates.",
-  "category": "security",
-  "tags": ["text", "lines", "duplicates"],
-  "icon": "scan-search",
-  "url": "/coolcode-tool-template/",
-  "source": "https://github.com/jsdyer/coolcode-tool-template",
+  "id": "drivecohort",
+  "title": "Drive Cohort",
+  "description": "Look up an exact drive model in Backblaze’s quarterly fleet history and compare two local SMART reports.",
+  "category": "explorers",
+  "tags": [
+    "hard drives",
+    "Backblaze",
+    "NAS",
+    "SMART",
+    "failure rates",
+    "storage"
+  ],
+  "icon": "database",
+  "url": "/drivecohort/",
+  "source": "https://github.com/jsdyer/drivecohort",
   "hosting": "project",
   "access": "browser",
   "data_info": {
-    "mode": "local",
-    "detail": "The browser reads the text you paste and compares its lines."
+    "mode": "mixed",
+    "detail": "Backblaze’s quarterly production fleet tables supply model counts, drive-days and failures. Optional smartctl reports stay on your device.",
+    "cadence": "Quarterly",
+    "probes": [
+      {
+        "label": "Source period",
+        "url": "https://coolcode.ca/drivecohort/data/status.json",
+        "path": [
+          "start"
+        ],
+        "end_path": [
+          "end"
+        ]
+      },
+      {
+        "label": "Data retrieved",
+        "url": "https://coolcode.ca/drivecohort/data/status.json",
+        "path": [
+          "retrieved"
+        ],
+        "count_at": {
+          "path": [
+            "rows"
+          ],
+          "unit": "model-quarters"
+        }
+      }
+    ]
   }
 }

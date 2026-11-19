@@ -1,115 +1,35 @@
-# CoolCode browser tool template
+# Drive Cohort
 
-A starting point for independent tools at `coolcode.ca/<repo>/`: a working local-text
-example, responsive UI, Python standard-library build, Node tests, PR checks and Pages
-publication. No npm install is needed.
-
-## Using the example
+Look up an exact disk model, inspect the quarterly failures and exposure behind its annualized failure rate, and compare readings from two local SMART reports. [Open Drive Cohort](https://coolcode.ca/drivecohort/)
 
 <!-- coolcode:guide -->
-The first occurrence of each trimmed line keeps its place. Compare the output with the original text before copying the result.
+Look up ST12000NM0007 and compare Q1 and Q2 2025. Backblaze recorded 24 failures across 92,483 drive-days in Q1 and nine across 91,801 in Q2. Bring two smartctl JSON files from the same disk to see what changed on your own device.
 <!-- /coolcode:guide -->
 
-For a real tool, replace this paragraph with one or two plain-text sentences
-about an example, a limit or how to interpret the results. Keep the source,
-coverage, refresh behaviour and a worked example in this README as appropriate.
-When updating a tool, revise any details its behaviour has changed and keep the
-homepage's shorter data-source sentence in `tool.json` accurate.
-The hub imports the marked note into the catalogue README.
+## Fleet records
 
-## One-time template setup
+The launch edition covers 34 exact models and 188 model-quarter observations from January 1, 2025 through June 30, 2026. Choose a quarter to see the published annualized failure rate (AFR), drive-days, failures and count at quarter end. Each table link opens the original Backblaze chart or HTML table. The data panel shows the source period, retrieval date and coverage independently. Missing models and missing quarters are marked explicitly. The comparisons retain variants such as MG08ACA16TE and MG08ACA16TEY.
 
-Enable **Settings → General → Template repository** here. This repository does not
-need Pages enabled: its workflow builds/tests but intentionally skips deployment.
-New copies also skip deployment until `scripts/init.py` sets the tool ID to match
-their repository name. This lets you create the repo before configuring Pages.
+Backblaze counts one drive-day per observed drive per day. AFR is failures divided by drive-days, multiplied by 365 and expressed as a percentage. The published quarterly tables cover qualifying production models. Fleet size, operating conditions and age can change between periods. The data describe fleet experience and cannot establish an individual disk’s chance of imminent failure.
 
-## Start a new tool
+Backblaze supplies the data. Its reuse terms require attribution, assign responsibility to anyone using the data, permit sale of derivative works, and prohibit selling the data itself. [Source data, methodology, and terms](https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data)
 
-1. Select **Use this template → Create a new repository**, choose owner `jsdyer`,
-   a unique lowercase name such as `my-tool`, and public visibility.
-2. Clone the new repository. Use Python 3.12+ and Node 24+.
-3. Set the identity, using a slug that matches the repository name:
+## Local report comparison
 
-```sh
-python3 scripts/init.py my-tool --title "My Tool" --description "Describe what this tool does."
-```
+Save a JSON report using the appropriate smartctl device path, for example `smartctl -a -j /dev/sda > earlier.json`. Select that file and, optionally, a second report. The page compares available power-on time, temperature, power cycles, selected ATA raw attributes, and selected NVMe fields. A dash means that a reading was absent. Vendor-specific ATA raw units and counter resets can complicate interpretation.
 
-Review the category, tags and icon in `tool.json`. `access: "browser"` tells the main
-catalogue that the tool works immediately without installation. `--owner` supports a different
-GitHub owner, but only projects owned by `jsdyer` inherit the CoolCode domain.
+The browser matches the complete model after normalizing capitalization, whitespace and an optional separate manufacturer name. Device suffixes are preserved. Two reports with different models or different available serial numbers cannot generate a same-disk change. If either serial is missing, the page asks you to confirm the device identity. The interface never displays serials. It reads local files in memory, sends no report content to a server and stores nothing across page loads. Clear reports releases the parsed readings.
 
-4. Replace the example in `web/` and its tests. Update the privacy explanation,
-   source attribution and README to describe the real tool.
-5. Test and preview:
+## Source updates
 
-```sh
-node --test tests/*.test.mjs
-python3 -m unittest discover -s tests -v
-python3 scripts/build.py
-python3 -m http.server 8000 --directory dist
-```
+The four 2025 source tables were published as images. Their CSV transcriptions live in `sources/`. The manifest includes the official chart URLs and SHA-256 digests. Beginning in 2026, the importer reads the quarterly HTML table in its original section and checks the row sums against official totals. It validates the displayed AFR against each numerator and denominator. The first-day-of-period and last-day-of-period values describe the quarter. The retrieval date records the UTC date of a successful check.
 
-Open `http://localhost:8000/`. The example trims lines, skips blanks and removes exact
-duplicates, preserving first-seen order and capitalization. It makes no API requests
-and does not persist text. Update that explanation if your app behaves differently.
+`python3 scripts/refresh.py` discovers new quarterly articles through Backblaze’s [Drive Stats archive](https://www.backblaze.com/blog/category/hard-drive-stats/), checks every edition and builds compact public JSON. The scheduled workflow checks monthly for new quarterly releases. A changed historical chart, unrecognized table or failed reconciliation stops the refresh before it can replace the deployed snapshot. If Backblaze changes a chart, review the transcription and totals before updating its digest.
 
-CI also tests the browser flow and mobile layout at a project subpath. Replace the
-sample assertions in `tests/browser_smoke.py` when implementing your own UI. To run
-that check locally (optional for ordinary preview):
+## Offline raw-data aggregation
 
-```sh
-python3 -m venv .venv
-. .venv/bin/activate
-python3 -m pip install -r tests/browser-requirements.txt
-python3 -m playwright install --with-deps chromium
-python3 tests/browser_smoke.py
-```
+Download a quarter ZIP from Backblaze. Run `python3 scripts/aggregate_raw.py 2025-Q2 data_Q2_2025.zip > raw-cohorts.csv`. This streams the daily CSVs and counts model observations, observed failures and drives present on the final day of the quarter. It requires every day, verifies dates and rejects duplicate exact-model/serial combinations within a day. It writes only per-model aggregates. The raw archive includes testing and low-exposure models. The website uses Backblaze’s reviewed production tables so the two populations remain separately identifiable.
 
-Playwright is a test-only dependency; the app and its static build do not use it.
+## Development
 
-## Publish and register
-
-When the actual tool is ready, in the **new tool repository** set **Settings → Pages → Build and deployment →
-Source → GitHub Actions**. Push to `main`, or manually run **Browser tool · Check and
-publish** after enabling Pages. If the initial deployment ran before Pages was enabled,
-enable it and rerun. PRs only check/build and provide a downloadable preview artifact.
-
-Keep asset paths and module imports relative. Check `https://coolcode.ca/my-tool/`.
-Do not add a CNAME or set `coolcode.ca` as this project's custom domain; the account
-site supplies it. Only successful `main` builds deploy.
-
-After verifying the app, copy the reviewed object from `tool.json` into `data/tools.json`
-in [the main site](https://github.com/jsdyer/jsdyer.github.io). Each tool still builds
-independently. Update the hub record when listing metadata changes; the hub is the
-authority for discovery. Ordinary app updates touch only this repository.
-
-The main site separates **Use in your browser** from **Install yourself**. An app
-that asks for a file is still a browser tool. Standalone Linux packages should start
-in their own repositories with their own build/release workflow, rather than copying
-this browser-only scaffold. Their hub record uses `access: "install"`, links to an
-installation guide, and includes `requirements`.
-
-## Files
-
-| Path | Purpose |
-| --- | --- |
-| `tool.json` | Page metadata and a ready-to-copy catalogue record |
-| `web/` | HTML, responsive CSS, DOM interactions and separate model logic |
-| `scripts/build.py` | Escape metadata and build `web/` into `dist/` |
-| `scripts/init.py` | Set a new project's identity |
-| `tests/` | Application and builder tests |
-| `.github/workflows/pages.yml` | Check PRs and publish successful main builds |
-| `AGENTS.md` | Instructions for future coding work |
-
-Namespace optional storage as `coolcode:<tool-id>:<key>`; CoolCode paths share a
-browser origin. Don't save pasted text/uploads by default. Document external APIs
-and send only the information needed for the selected action. Never embed secrets.
-
-Scheduled refresh is opt-in. Validate source data before deploying, display its date,
-and preserve the last good deployment on failure. Public-repository schedules can
-stop after 60 days without repository activity.
-
-Templates don't propagate future edits automatically. Adopt fixes explicitly and
-consider a versioned reusable workflow once several tools confirm the shared process.
-Choose and add the intended software license before distributing a new project.
+Use Python 3.11+ and Node 20+. Run `node --test tests/*.test.mjs`, `python3 -m unittest discover -s tests -v` and `python3 scripts/build.py`. Serve the resulting directory with `python3 -m http.server --directory dist`. The standard library builds the site without network access. Install the test-only dependencies from `tests/browser-requirements.txt` and run `python3 -m playwright install chromium` followed by `python3 tests/browser_smoke.py` for the full browser check. Main builds publish to GitHub Pages after validation.

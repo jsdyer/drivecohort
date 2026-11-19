@@ -1,0 +1,26 @@
+{
+  "2025-Q1": {
+    "chart": "https://www.backblaze.com/blog/wp-content/uploads/2025/05/Drive-Stats_Q12025_Quarterly.png",
+    "sha256": "f4e402e6a84bc1e14ccc605b6f6bf1fef001536e93d103080ae3f4bff397a50e",
+    "days": 27388225,
+    "failures": 1064
+  },
+  "2025-Q2": {
+    "chart": "https://www.backblaze.com/blog/wp-content/uploads/2025/08/Quarterly-Q22025-1.png",
+    "sha256": "34050407df69bdcb2c811e754b7760effb727494f1859376a0b3d5c1bf86c7d9",
+    "days": 28402627,
+    "failures": 1061
+  },
+  "2025-Q3": {
+    "chart": "https://www.backblaze.com/blog/wp-content/uploads/2025/11/Chart-6-1024x979.png",
+    "sha256": "291e31b17a4e325f98557207bb7a8cd3c21ef4f7dabf650bf1f752ce8249d9f6",
+    "days": 29431703,
+    "failures": 1250
+  },
+  "2025-Q4": {
+    "chart": "https://www.backblaze.com/blog/wp-content/uploads/2026/02/Q4-2025-Drive-Stats-Quarterly-1024x932.png",
+    "sha256": "c3777afa3fcd898b0367237193221561794d3db5fd5109f5c879e68f420936b7",
+    "days": 30534025,
+    "failures": 943
+  }
+}

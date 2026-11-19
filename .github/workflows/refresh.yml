@@ -1,0 +1,32 @@
+name: Refresh Backblaze quarterly tables
+on:
+  schedule:
+    - cron: '32 9 6 * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: backblaze-quarterly-refresh
+  cancel-in-progress: false
+jobs:
+  collect:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - run: python3 scripts/refresh.py
+      - run: python3 -m unittest discover -s tests -v && node --test tests/*.test.mjs && python3 scripts/build.py
+      - name: Publish validated snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add web/data
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "Refresh quarterly Backblaze production cohorts"
+            git push
+            gh workflow run pages.yml --ref main
+          fi
