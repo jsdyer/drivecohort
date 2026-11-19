@@ -56,8 +56,11 @@ def main():
                 page.locator('#clear').click()
                 expect(page.locator('#reportTable')).to_be_empty()
                 page.set_viewport_size({'width':360,'height':780})
-                assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
                 page.screenshot(path=str(screenshots/'mobile.png'),full_page=True)
+                overflows=page.evaluate('''[...document.querySelectorAll('body *')].filter(el =>
+                  !el.closest('.overflow') && el.getBoundingClientRect().right > innerWidth + 1
+                ).map(el => [el.tagName,el.id,el.className,Math.round(el.getBoundingClientRect().right)])''')
+                assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'),overflows
                 assert not errors,errors
                 browser.close()
         finally:

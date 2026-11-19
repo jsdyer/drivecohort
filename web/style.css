@@ -531,3 +531,18 @@ footer {
     font-size:11px;
   }
 }
+@media (max-width:720px) {
+  .finder, .files {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .finder > *, .files label, .resulthead > div {
+    min-width: 0;
+  }
+  .files input {
+    width: 100%;
+    min-width: 0;
+  }
+  .repo { white-space: nowrap; }
+  .bar { gap: 10px; }
+  .panel p, .sourcebar, .links { overflow-wrap: anywhere; }
+}
