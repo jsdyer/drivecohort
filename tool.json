@@ -19,7 +19,7 @@
   "data_info": {
     "mode": "mixed",
     "detail": "Backblaze’s quarterly production fleet tables supply model counts, drive-days and failures. Optional smartctl reports stay on your device.",
-    "cadence": "Monthly for quarterly reports",
+    "cadence": "Monthly",
     "probes": [
       {
         "label": "Source period",
