@@ -33,3 +33,11 @@ Download a quarter ZIP from Backblaze. Run `python3 scripts/aggregate_raw.py 202
 ## Development
 
 Use Python 3.11+ and Node 20+. Run `node --test tests/*.test.mjs`, `python3 -m unittest discover -s tests -v` and `python3 scripts/build.py`. Serve the resulting directory with `python3 -m http.server --directory dist`. The standard library builds the site without network access. Install the test-only dependencies from `tests/browser-requirements.txt` and run `python3 -m playwright install chromium` followed by `python3 tests/browser_smoke.py` for the full browser check. Main builds publish to GitHub Pages after validation.
+
+<!-- schedule-reliability -->
+## Schedule reliability
+
+Public GitHub repositories can have scheduled workflows disabled after 60 days of inactivity. A separate weekly [schedule guard](.github/workflows/schedule-guard.yml) calls GitHub's enable-workflow API for an explicit list of refresh workflows and itself. It can restore workflows disabled for inactivity, preserves manually disabled workflows, and runs independently of collection failures.
+
+This is an interim mitigation, not a scheduling guarantee: GitHub does not document active-workflow renewal as a permanent exemption, and scheduled runs can be delayed or dropped. A scheduler on our own Linux server is the planned independent trigger. The guard does not collect data, create dummy commits, or change source/check timestamps; successful collection and published data freshness still need monitoring.
+<!-- /schedule-reliability -->
